@@ -10,14 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PauseRouteImport } from './routes/pause'
 import { Route as ResetRouteImport } from './routes/reset'
 import { Route as ResetProfileRouteImport } from './routes/reset-profile'
+import { Route as VerifyRouteImport } from './routes/verify'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
@@ -30,6 +38,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PauseRoute = PauseRouteImport.update({
+  id: '/pause',
+  path: '/pause',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetRoute = ResetRouteImport.update({
   id: '/reset',
   path: '/reset',
@@ -40,43 +53,85 @@ const ResetProfileRoute = ResetProfileRouteImport.update({
   path: '/reset-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/pause': typeof PauseRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/pause': typeof PauseRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/pause': typeof PauseRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/onboarding' | '/reset' | '/reset-profile'
+  fullPaths:
+    | '/'
+    | '/checkin'
+    | '/home'
+    | '/onboarding'
+    | '/pause'
+    | '/reset'
+    | '/reset-profile'
+    | '/verify'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/onboarding' | '/reset' | '/reset-profile'
-  id: '__root__' | '/' | '/home' | '/onboarding' | '/reset' | '/reset-profile'
+  to:
+    | '/'
+    | '/checkin'
+    | '/home'
+    | '/onboarding'
+    | '/pause'
+    | '/reset'
+    | '/reset-profile'
+    | '/verify'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkin'
+    | '/home'
+    | '/onboarding'
+    | '/pause'
+    | '/reset'
+    | '/reset-profile'
+    | '/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckinRoute: typeof CheckinRoute
   HomeRoute: typeof HomeRoute
   OnboardingRoute: typeof OnboardingRoute
+  PauseRoute: typeof PauseRoute
   ResetRoute: typeof ResetRoute
   ResetProfileRoute: typeof ResetProfileRoute
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -86,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home': {
@@ -102,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pause': {
+      id: '/pause'
+      path: '/pause'
+      fullPath: '/pause'
+      preLoaderRoute: typeof PauseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset': {
       id: '/reset'
       path: '/reset'
@@ -116,15 +185,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckinRoute: CheckinRoute,
   HomeRoute: HomeRoute,
   OnboardingRoute: OnboardingRoute,
+  PauseRoute: PauseRoute,
   ResetRoute: ResetRoute,
   ResetProfileRoute: ResetProfileRoute,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
