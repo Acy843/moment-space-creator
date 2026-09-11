@@ -1,0 +1,90 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { MovaScreen, PrimaryButton, ScreenHeader, SelectChip } from "@/components/mova/screen";
+import { useMova } from "@/lib/mova-store";
+
+export const Route = createFileRoute("/pause")({
+  head: () => ({
+    meta: [
+      { title: "Reschedule this reset | MOVA" },
+      {
+        name: "description",
+        content:
+          "Can't pause right now? Tell MOVA what's happening and it will move your reset instead of dropping it.",
+      },
+      { property: "og:title", content: "Reschedule this reset | MOVA" },
+      { property: "og:description", content: "No problem. We'll adjust your next reset." },
+    ],
+  }),
+  component: PauseScreen,
+});
+
+const reasons = [
+  "With a patient/customer",
+  "In a meeting",
+  "Driving",
+  "Safety-critical task",
+  "Emergency",
+  "Not possible right now",
+  "Other",
+];
+
+function PauseScreen() {
+  const navigate = useNavigate();
+  const { addEntry } = useMova();
+  const [reason, setReason] = useState<string | null>(null);
+  const [when, setWhen] = useState<string | null>(null);
+
+  const confirm = () => {
+    addEntry({
+      time: "Now",
+      title: "Shoulder + breathing reset",
+      kind: "Movement",
+      status: "rescheduled",
+      reason: reason ?? "Not possible right now",
+    });
+    navigate({ to: "/home" });
+  };
+
+  return (
+    <MovaScreen withNav={false}>
+      <ScreenHeader
+        eyebrow="Rescheduling"
+        title="No problem. What's happening?"
+        subtitle="MOVA never cancels a reset — it finds a better moment."
+        back="/reset"
+      />
+
+      <div className="mt-6 grid gap-2.5">
+        {reasons.map((r) => (
+          <SelectChip
+            key={r}
+            label={r}
+            selected={reason === r}
+            onClick={() => setReason(r)}
+          />
+        ))}
+      </div>
+
+      {reason && (
+        <div className="animate-rise mt-6">
+          <div className="frost rounded-[26px] p-5">
+            <p className="text-[15px] font-semibold text-ink">We'll adjust your next reset.</p>
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-soft">
+              Your reason is used to learn when resets are realistic for you — not to report
+              on you.
+            </p>
+            <div className="mt-4 grid gap-2.5">
+              {["Remind me in 10 min", "Remind me in 20 min", "Choose a time"].map((w) => (
+                <SelectChip key={w} label={w} selected={when === w} onClick={() => setWhen(w)} />
+              ))}
+            </div>
+          </div>
+          <PrimaryButton className="mt-4" onClick={confirm}>
+            Confirm
+          </PrimaryButton>
+        </div>
+      )}
+    </MovaScreen>
+  );
+}

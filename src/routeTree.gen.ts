@@ -10,33 +10,206 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as LearningRouteImport } from './routes/learning'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PauseRouteImport } from './routes/pause'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ResetRouteImport } from './routes/reset'
+import { Route as ResetProfileRouteImport } from './routes/reset-profile'
+import { Route as VerifyRouteImport } from './routes/verify'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearningRoute = LearningRouteImport.update({
+  id: '/learning',
+  path: '/learning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PauseRoute = PauseRouteImport.update({
+  id: '/pause',
+  path: '/pause',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetRoute = ResetRouteImport.update({
+  id: '/reset',
+  path: '/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetProfileRoute = ResetProfileRouteImport.update({
+  id: '/reset-profile',
+  path: '/reset-profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/history': typeof HistoryRoute
+  '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
+  '/learning': typeof LearningRoute
+  '/library': typeof LibraryRoute
+  '/onboarding': typeof OnboardingRoute
+  '/pause': typeof PauseRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/reset': typeof ResetRoute
+  '/reset-profile': typeof ResetProfileRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/history': typeof HistoryRoute
+  '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
+  '/learning': typeof LearningRoute
+  '/library': typeof LibraryRoute
+  '/onboarding': typeof OnboardingRoute
+  '/pause': typeof PauseRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/reset': typeof ResetRoute
+  '/reset-profile': typeof ResetProfileRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
+  '/history': typeof HistoryRoute
+  '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
+  '/learning': typeof LearningRoute
+  '/library': typeof LibraryRoute
+  '/onboarding': typeof OnboardingRoute
+  '/pause': typeof PauseRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/reset': typeof ResetRoute
+  '/reset-profile': typeof ResetProfileRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/checkin'
+    | '/history'
+    | '/home'
+    | '/insights'
+    | '/learning'
+    | '/library'
+    | '/onboarding'
+    | '/pause'
+    | '/privacy'
+    | '/profile'
+    | '/reset'
+    | '/reset-profile'
+    | '/verify'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/checkin'
+    | '/history'
+    | '/home'
+    | '/insights'
+    | '/learning'
+    | '/library'
+    | '/onboarding'
+    | '/pause'
+    | '/privacy'
+    | '/profile'
+    | '/reset'
+    | '/reset-profile'
+    | '/verify'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkin'
+    | '/history'
+    | '/home'
+    | '/insights'
+    | '/learning'
+    | '/library'
+    | '/onboarding'
+    | '/pause'
+    | '/privacy'
+    | '/profile'
+    | '/reset'
+    | '/reset-profile'
+    | '/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckinRoute: typeof CheckinRoute
+  HistoryRoute: typeof HistoryRoute
+  HomeRoute: typeof HomeRoute
+  InsightsRoute: typeof InsightsRoute
+  LearningRoute: typeof LearningRoute
+  LibraryRoute: typeof LibraryRoute
+  OnboardingRoute: typeof OnboardingRoute
+  PauseRoute: typeof PauseRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
+  ResetRoute: typeof ResetRoute
+  ResetProfileRoute: typeof ResetProfileRoute
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +221,115 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learning': {
+      id: '/learning'
+      path: '/learning'
+      fullPath: '/learning'
+      preLoaderRoute: typeof LearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pause': {
+      id: '/pause'
+      path: '/pause'
+      fullPath: '/pause'
+      preLoaderRoute: typeof PauseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset': {
+      id: '/reset'
+      path: '/reset'
+      fullPath: '/reset'
+      preLoaderRoute: typeof ResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-profile': {
+      id: '/reset-profile'
+      path: '/reset-profile'
+      fullPath: '/reset-profile'
+      preLoaderRoute: typeof ResetProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckinRoute: CheckinRoute,
+  HistoryRoute: HistoryRoute,
+  HomeRoute: HomeRoute,
+  InsightsRoute: InsightsRoute,
+  LearningRoute: LearningRoute,
+  LibraryRoute: LibraryRoute,
+  OnboardingRoute: OnboardingRoute,
+  PauseRoute: PauseRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
+  ResetRoute: ResetRoute,
+  ResetProfileRoute: ResetProfileRoute,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

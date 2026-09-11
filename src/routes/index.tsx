@@ -1,24 +1,82 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { MovaCanvas } from "@/components/mova/screen";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "MOVA — Move towards a healthier life" },
+      {
+        name: "description",
+        content:
+          "MOVA uses AI to help workers take short, personalized reset moments before stress and fatigue build up.",
+      },
+      { property: "og:title", content: "MOVA — Move towards a healthier life" },
+      {
+        property: "og:description",
+        content:
+          "An AI-powered workplace wellness companion that finds the right moment for a short reset.",
+      },
+    ],
+  }),
+  component: Welcome,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Welcome() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <MovaCanvas>
+      <div className="relative mx-auto flex min-h-[100dvh] max-w-[420px] flex-col px-6 pt-16 pb-10">
+        <div className="animate-rise flex items-center gap-3">
+          <div className="frost grid size-12 place-items-center rounded-2xl">
+            <span className="animate-breathe size-4 rounded-full bg-gradient-to-br from-sage to-sky" />
+          </div>
+          <div>
+            <p className="text-[15px] font-extrabold tracking-[0.32em] text-ink">MOVA</p>
+            <p className="text-[10px] font-medium tracking-[0.2em] text-soft uppercase">
+              wellness rhythm
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-16 flex-1">
+          <h1 className="animate-rise font-display text-[42px] leading-[1.02] font-semibold text-ink">
+            Moving towards a healthier life.
+          </h1>
+          <p className="mt-5 max-w-[30ch] text-[15px] leading-relaxed text-soft">
+            MOVA uses AI to help you take meaningful breaks before stress and fatigue build
+            up.
+          </p>
+
+          <div className="relative mt-14 grid place-items-center">
+            <div className="animate-breathe absolute size-56 rounded-full bg-gradient-to-br from-sage/25 to-sky/25 blur-xl" />
+            <div className="frost relative grid size-56 place-items-center rounded-full">
+              <div className="animate-breathe grid size-36 place-items-center rounded-full bg-white/60">
+                <p className="text-center font-display text-[19px] leading-tight text-sagedeep">
+                  Pause
+                  <br />
+                  before you
+                  <br />
+                  break.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 space-y-3">
+          <Link
+            to="/onboarding"
+            className="block w-full rounded-2xl bg-sagedeep/95 px-5 py-4 text-center text-[15px] font-semibold text-white shadow-lg shadow-sagedeep/25 transition-all hover:bg-sagedeep active:scale-[0.99]"
+          >
+            Get Started
+          </Link>
+          <Link
+            to="/home"
+            className="frost-2 block w-full rounded-2xl px-5 py-3.5 text-center text-[14px] font-medium text-soft transition-colors hover:text-sagedeep"
+          >
+            I already have an account
+          </Link>
+        </div>
+      </div>
+    </MovaCanvas>
   );
 }
