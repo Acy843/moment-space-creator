@@ -162,3 +162,97 @@
     color: var(--color-foreground);
   }
 }
+
+@utility frost {
+  background: linear-gradient(158deg, rgb(255 255 255 / 0.85), rgb(238 244 247 / 0.65));
+  border: 1px solid rgb(255 255 255 / 0.6);
+  box-shadow:
+    0 22px 48px -26px rgb(20 52 74 / 0.55),
+    inset 0 1px 0 #ffffff,
+    inset 0 0 0 1px rgb(255 255 255 / 0.18);
+  backdrop-filter: blur(14px);
+}
+
+@utility frost-2 {
+  background: linear-gradient(158deg, rgb(255 255 255 / 0.72), rgb(232 241 245 / 0.53));
+  border: 1px solid rgb(255 255 255 / 0.5);
+  box-shadow:
+    0 14px 34px -22px rgb(20 52 74 / 0.5),
+    inset 0 1px 0 #ffffff;
+  backdrop-filter: blur(10px);
+}
+
+@utility mova-canvas {
+  background: linear-gradient(
+    165deg,
+    oklch(0.98 0.006 240) 0%,
+    oklch(0.945 0.014 238) 46%,
+    oklch(0.905 0.022 240) 100%
+  );
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(24px, 14px);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-breathe {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@utility animate-floaty {
+  animation: floaty 20s ease-in-out infinite;
+}
+
+@utility animate-drift {
+  animation: drift 16s ease-in-out infinite;
+}
+
+@utility animate-rise {
+  animation: rise 0.55s cubic-bezier(0.2, 0.7, 0, 1) both;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+  body {
+    -webkit-font-smoothing: antialiased;
+  }
+}
