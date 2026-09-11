@@ -14,9 +14,12 @@ import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as LearningRouteImport } from './routes/learning'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PauseRouteImport } from './routes/pause'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ResetRouteImport } from './routes/reset'
 import { Route as ResetProfileRouteImport } from './routes/reset-profile'
 import { Route as VerifyRouteImport } from './routes/verify'
@@ -46,6 +49,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearningRoute = LearningRouteImport.update({
+  id: '/learning',
+  path: '/learning',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
@@ -59,6 +67,16 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const PauseRoute = PauseRouteImport.update({
   id: '/pause',
   path: '/pause',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetRoute = ResetRouteImport.update({
@@ -83,9 +101,12 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/learning': typeof LearningRoute
   '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
   '/verify': typeof VerifyRoute
@@ -96,9 +117,12 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/learning': typeof LearningRoute
   '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
   '/verify': typeof VerifyRoute
@@ -110,9 +134,12 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/learning': typeof LearningRoute
   '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
   '/verify': typeof VerifyRoute
@@ -125,9 +152,12 @@ export interface FileRouteTypes {
     | '/history'
     | '/home'
     | '/insights'
+    | '/learning'
     | '/library'
     | '/onboarding'
     | '/pause'
+    | '/privacy'
+    | '/profile'
     | '/reset'
     | '/reset-profile'
     | '/verify'
@@ -138,9 +168,12 @@ export interface FileRouteTypes {
     | '/history'
     | '/home'
     | '/insights'
+    | '/learning'
     | '/library'
     | '/onboarding'
     | '/pause'
+    | '/privacy'
+    | '/profile'
     | '/reset'
     | '/reset-profile'
     | '/verify'
@@ -151,9 +184,12 @@ export interface FileRouteTypes {
     | '/history'
     | '/home'
     | '/insights'
+    | '/learning'
     | '/library'
     | '/onboarding'
     | '/pause'
+    | '/privacy'
+    | '/profile'
     | '/reset'
     | '/reset-profile'
     | '/verify'
@@ -165,9 +201,12 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   HomeRoute: typeof HomeRoute
   InsightsRoute: typeof InsightsRoute
+  LearningRoute: typeof LearningRoute
   LibraryRoute: typeof LibraryRoute
   OnboardingRoute: typeof OnboardingRoute
   PauseRoute: typeof PauseRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
   ResetRoute: typeof ResetRoute
   ResetProfileRoute: typeof ResetProfileRoute
   VerifyRoute: typeof VerifyRoute
@@ -210,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learning': {
+      id: '/learning'
+      path: '/learning'
+      fullPath: '/learning'
+      preLoaderRoute: typeof LearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library': {
       id: '/library'
       path: '/library'
@@ -229,6 +275,20 @@ declare module '@tanstack/react-router' {
       path: '/pause'
       fullPath: '/pause'
       preLoaderRoute: typeof PauseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset': {
@@ -261,9 +321,12 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   HomeRoute: HomeRoute,
   InsightsRoute: InsightsRoute,
+  LearningRoute: LearningRoute,
   LibraryRoute: LibraryRoute,
   OnboardingRoute: OnboardingRoute,
   PauseRoute: PauseRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
   ResetRoute: ResetRoute,
   ResetProfileRoute: ResetProfileRoute,
   VerifyRoute: VerifyRoute,
