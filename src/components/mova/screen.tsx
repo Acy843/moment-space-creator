@@ -60,7 +60,7 @@ export function ScreenHeader({
     <div className="animate-rise">
       {back && (
         <Link
-          to={back}
+          to={back as "/"}
           className="mb-4 inline-flex items-center gap-1.5 text-[12px] font-medium text-soft transition-colors hover:text-sagedeep"
         >
           <ArrowLeft className="size-3.5" strokeWidth={1.75} />
