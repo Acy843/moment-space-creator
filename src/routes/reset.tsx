@@ -45,10 +45,9 @@ function ResetAlert() {
   }, []);
 
   useEffect(() => {
-    if (seconds === 0) {
-      const t = setTimeout(() => navigate({ to: "/verify" }), 900);
-      return () => clearTimeout(t);
-    }
+    if (seconds !== 0) return undefined;
+    const t = setTimeout(() => navigate({ to: "/verify" }), 900);
+    return () => clearTimeout(t);
   }, [seconds, navigate]);
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");

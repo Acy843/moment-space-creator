@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as LibraryRouteImport } from './routes/library'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PauseRouteImport } from './routes/pause'
 import { Route as ResetRouteImport } from './routes/reset'
@@ -28,9 +31,24 @@ const CheckinRoute = CheckinRouteImport.update({
   path: '/checkin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -62,7 +80,10 @@ const VerifyRoute = VerifyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkin': typeof CheckinRoute
+  '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
+  '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
   '/reset': typeof ResetRoute
@@ -72,7 +93,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkin': typeof CheckinRoute
+  '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
+  '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
   '/reset': typeof ResetRoute
@@ -83,7 +107,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkin': typeof CheckinRoute
+  '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
+  '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
   '/reset': typeof ResetRoute
@@ -95,7 +122,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/checkin'
+    | '/history'
     | '/home'
+    | '/insights'
+    | '/library'
     | '/onboarding'
     | '/pause'
     | '/reset'
@@ -105,7 +135,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/checkin'
+    | '/history'
     | '/home'
+    | '/insights'
+    | '/library'
     | '/onboarding'
     | '/pause'
     | '/reset'
@@ -115,7 +148,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/checkin'
+    | '/history'
     | '/home'
+    | '/insights'
+    | '/library'
     | '/onboarding'
     | '/pause'
     | '/reset'
@@ -126,7 +162,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckinRoute: typeof CheckinRoute
+  HistoryRoute: typeof HistoryRoute
   HomeRoute: typeof HomeRoute
+  InsightsRoute: typeof InsightsRoute
+  LibraryRoute: typeof LibraryRoute
   OnboardingRoute: typeof OnboardingRoute
   PauseRoute: typeof PauseRoute
   ResetRoute: typeof ResetRoute
@@ -150,11 +189,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckinRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
       id: '/home'
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -198,7 +258,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckinRoute: CheckinRoute,
+  HistoryRoute: HistoryRoute,
   HomeRoute: HomeRoute,
+  InsightsRoute: InsightsRoute,
+  LibraryRoute: LibraryRoute,
   OnboardingRoute: OnboardingRoute,
   PauseRoute: PauseRoute,
   ResetRoute: ResetRoute,
