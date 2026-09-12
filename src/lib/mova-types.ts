@@ -147,6 +147,7 @@ export type MovaSettings = {
 
 export type OnboardingDraft = {
   occupation: string;
+  displayName?: string;
   customOccupation?: string;
   workStyle: string[];
   constraints: string[];

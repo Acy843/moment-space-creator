@@ -131,16 +131,17 @@ export async function completeOnboardingFlow(
     typicalLocations: [],
     updatedAt: nowIso(),
   };
+  const displayName = draft.displayName?.trim() || null;
 
   if (isFirebaseUser(u)) {
     await ensureUser(u.uid);
     await saveProfile(u.uid, profile);
     const settings = await ensureSettings(u.uid, nowIso());
-    await saveUser(u.uid, { onboardingCompleted: true });
+    await saveUser(u.uid, { displayName, onboardingCompleted: true });
     const plan = buildDailySchedule(profile, new Date());
     for (const r of plan) await putReset(u.uid, r);
     const userDoc: UserDocument = {
-      displayName: null,
+      displayName,
       email: null,
       onboardingCompleted: true,
       createdAt: nowIso(),
@@ -161,7 +162,7 @@ export async function completeOnboardingFlow(
   const settings = (await import("@/lib/mova-types")).defaultSettings();
   const plan = buildDailySchedule(profile, new Date());
   return finishHydration(u, {
-    userDoc: { displayName: null, email: null, onboardingCompleted: true, createdAt: nowIso(), updatedAt: nowIso() },
+    userDoc: { displayName, email: null, onboardingCompleted: true, createdAt: nowIso(), updatedAt: nowIso() },
     profile,
     settings,
     resets: sortResets(plan),

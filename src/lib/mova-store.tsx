@@ -460,7 +460,7 @@ export function MovaProvider({ children }: { children: ReactNode }) {
       syncStatus,
       syncError,
       authReady: auth.status === "ready" || auth.status === "disabled",
-      displayName: state.userDoc?.displayName ?? "Guest",
+      displayName: state.userDoc?.displayName?.trim() || state.user?.displayName?.trim() || "Guest",
       displayOccupation: state.profile?.occupation || "",
       currentLocationContext,
       currentLocation,

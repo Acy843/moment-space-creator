@@ -111,7 +111,7 @@ function ScanScreen() {
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/25">
                 <div className="h-full rounded-full bg-gradient-to-r from-sage to-sky" style={{ width: `${progress}%` }} />
               </div>
-              <p className="mt-1.5 text-center text-[10px] text-white/70">Prototype simulation — no real analysis</p>
+              <p className="mt-1.5 text-center text-[10px] text-white/70"></p>
             </div>
           )}
         </div>

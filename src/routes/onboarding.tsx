@@ -73,15 +73,18 @@ const steps = ["What do you do?", "What does your workday look like?", "What are
 
 function Onboarding() {
   const navigate = useNavigate();
-  const { profile, onboarded, authReady, completeOnboarding, savingOnboarding, onboardingError } = useMova();
+  const { profile, onboarded, authReady, completeOnboarding, savingOnboarding, onboardingError, state } = useMova();
   const [step, setStep] = useState(0);
   const [occupation, setOccupation] = useState(profile?.occupation ?? "");
+  const [displayName, setDisplayName] = useState(state.userDoc?.displayName ?? "");
   const [custom, setCustom] = useState("");
   const [styles, setStyles] = useState<string[]>(profile?.workStyle ?? []);
   const [limits, setLimits] = useState<string[]>(profile?.constraints ?? []);
   const [rhythm, setRhythm] = useState(profile?.breakRhythm ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
     set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
@@ -89,9 +92,11 @@ function Onboarding() {
   const finish = async () => {
     setSaving(true);
     setError(null);
+    setNameError(null);
     try {
       await completeOnboarding({
         occupation: occupation || "Healthcare",
+        displayName: displayName.trim(),
         customOccupation: custom,
         workStyle: styles,
         constraints: limits,
@@ -108,6 +113,12 @@ function Onboarding() {
   const next = () => {
     if (step < 3) {
       setStep(step + 1);
+      return;
+    }
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      setNameError("Please tell us what to call you.");
+      setShowNamePrompt(true);
       return;
     }
     void finish();
@@ -249,6 +260,57 @@ function Onboarding() {
         <p className="mt-3 text-center text-[12.5px] text-soft">
           Couldn't save just now — your answers are kept on this device. {error ?? onboardingError}
         </p>
+      )}
+
+      {showNamePrompt && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/45 p-4">
+          <div className="w-full max-w-sm rounded-[28px] bg-white p-5 shadow-2xl">
+            <p className="text-[10px] font-semibold tracking-[0.24em] text-sagedeep uppercase">Welcome</p>
+            <h3 className="mt-2 font-display text-[24px] font-semibold text-ink">What should we call you?</h3>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-soft">
+              We’ll use this name across your home screen, profile, and check-ins.
+            </p>
+            <input
+              value={displayName}
+              onChange={(e) => {
+                setDisplayName(e.target.value);
+                if (nameError) setNameError(null);
+              }}
+              placeholder="Your name"
+              className="mt-4 w-full rounded-2xl border border-sage/25 bg-mist/40 px-4 py-3 text-[14px] text-ink placeholder:text-soft/70 focus:border-sage/50 focus:outline-none"
+              autoFocus
+            />
+            {nameError && <p className="mt-2 text-[12px] text-soft">{nameError}</p>}
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNamePrompt(false);
+                  setNameError(null);
+                }}
+                className="frost-2 flex-1 rounded-2xl px-4 py-3 text-[14px] font-medium text-soft"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const trimmed = displayName.trim();
+                  if (!trimmed) {
+                    setNameError("Please tell us what to call you.");
+                    return;
+                  }
+                  setShowNamePrompt(false);
+                  setNameError(null);
+                  await finish();
+                }}
+                className="flex-1 rounded-2xl bg-sagedeep/95 px-4 py-3 text-[14px] font-semibold text-white shadow-lg shadow-sagedeep/25"
+              >
+                Save name
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </MovaScreen>
   );
