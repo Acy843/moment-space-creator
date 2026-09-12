@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Phase 1: anonymous user owns ONLY users/{uid} subtree.
+    // Identity doc + profile/main + settings/main + resets + checkins.
+    // No camera/location collections. Fail-closed everything else.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      match /profile/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid
+          && docId == "main";
+      }
+
+      match /settings/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid
+          && docId == "main";
+      }
+
+      match /resets/{resetId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      match /checkins/{checkinId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

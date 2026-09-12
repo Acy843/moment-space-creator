@@ -73,31 +73,66 @@ const steps = ["What do you do?", "What does your workday look like?", "What are
 
 function Onboarding() {
   const navigate = useNavigate();
-  const { state, setProfile, completeOnboarding } = useMova();
+  const { profile, onboarded, authReady, completeOnboarding, savingOnboarding, onboardingError } = useMova();
   const [step, setStep] = useState(0);
-  const [occupation, setOccupation] = useState(state.profile.occupation);
+  const [occupation, setOccupation] = useState(profile?.occupation ?? "");
   const [custom, setCustom] = useState("");
-  const [styles, setStyles] = useState<string[]>(state.profile.workStyle);
-  const [limits, setLimits] = useState<string[]>(state.profile.constraints);
-  const [rhythm, setRhythm] = useState(state.profile.breakRhythm);
+  const [styles, setStyles] = useState<string[]>(profile?.workStyle ?? []);
+  const [limits, setLimits] = useState<string[]>(profile?.constraints ?? []);
+  const [rhythm, setRhythm] = useState(profile?.breakRhythm ?? "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
     set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+
+  const finish = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await completeOnboarding({
+        occupation: occupation || "Healthcare",
+        customOccupation: custom,
+        workStyle: styles,
+        constraints: limits,
+        breakRhythm: rhythm || "My schedule is unpredictable",
+      });
+      navigate({ to: "/reset-profile" });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : onboardingError ?? "save_failed");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const next = () => {
     if (step < 3) {
       setStep(step + 1);
       return;
     }
-    setProfile({
-      occupation: occupation === "Other" && custom ? custom : occupation,
-      workStyle: styles,
-      constraints: limits,
-      breakRhythm: rhythm,
-    });
-    completeOnboarding();
-    navigate({ to: "/reset-profile" });
+    void finish();
   };
+
+  if (!authReady) {
+    return (
+      <MovaScreen withNav={false}>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-[13px] text-soft">Setting up your space…</p>
+        </div>
+      </MovaScreen>
+    );
+  }
+
+  if (onboarded) {
+    navigate({ to: "/home" });
+    return (
+      <MovaScreen withNav={false}>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-[13px] text-soft">Taking you home…</p>
+        </div>
+      </MovaScreen>
+    );
+  }
 
   return (
     <MovaScreen withNav={false}>
@@ -203,12 +238,18 @@ function Onboarding() {
             type="button"
             onClick={() => setStep(step - 1)}
             className="frost-2 rounded-2xl px-6 py-4 text-[14px] font-medium text-soft"
+            disabled={saving || savingOnboarding}
           >
             Back
           </button>
         )}
-        <PrimaryButton onClick={next}>{step < 3 ? "Continue" : "See my profile"}</PrimaryButton>
+        <PrimaryButton onClick={next}>{step < 3 ? "Continue" : saving || savingOnboarding ? "Saving…" : "See my profile"}</PrimaryButton>
       </div>
+      {(error || onboardingError) && (
+        <p className="mt-3 text-center text-[12.5px] text-soft">
+          Couldn't save just now — your answers are kept on this device. {error ?? onboardingError}
+        </p>
+      )}
     </MovaScreen>
   );
 }

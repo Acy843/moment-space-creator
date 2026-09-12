@@ -30,18 +30,17 @@ export const Route = createFileRoute("/profile")({
 });
 
 function Profile() {
-  const { state, reset } = useMova();
-  const p = state.profile;
+  const { profile, settings, displayName, displayOccupation, syncStatus, reset } = useMova();
 
   const rows = [
-    { icon: Briefcase, label: "Occupation", value: p.occupation, to: "/onboarding" },
-    { icon: CalendarClock, label: "Work schedule", value: p.breakRhythm, to: "/onboarding" },
+    { icon: Briefcase, label: "Occupation", value: displayOccupation, to: "/onboarding" },
+    { icon: CalendarClock, label: "Work schedule", value: profile?.breakRhythm || "Not set yet", to: "/onboarding" },
     { icon: Sparkles, label: "Reset preferences", value: "Movement first", to: "/library" },
-    { icon: Bell, label: "Notification settings", value: "Gentle", to: "/privacy" },
+    { icon: Bell, label: "Notification settings", value: settings?.notificationsEnabled === false ? "Off" : "Gentle", to: "/privacy" },
     {
       icon: CircleCheck,
       label: "Verification preferences",
-      value: "Motion only",
+      value: settings?.cameraVerificationEnabled === false ? "Manual only" : "Motion only",
       to: "/privacy",
     },
     { icon: Lock, label: "Privacy", value: "You're in control", to: "/privacy" },
@@ -55,14 +54,17 @@ function Profile() {
 
   return (
     <MovaScreen>
-      <ScreenHeader eyebrow="Profile" title={p.name} subtitle={`${p.occupation} · Hospital`} />
+      <ScreenHeader eyebrow="Profile" title={displayName} subtitle={displayOccupation} />
+      {syncStatus === "loading" && (
+        <p className="mt-3 text-[11px] font-medium text-soft">Syncing your profile…</p>
+      )}
 
       <FrostCard className="mt-6 p-5">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
           Work style
         </p>
         <p className="mt-1.5 text-[14px] leading-relaxed text-ink">
-          {p.workStyle.join(" · ")}
+          {profile && profile.workStyle.length > 0 ? profile.workStyle.join(" · ") : "Not set yet — finish onboarding."}
         </p>
       </FrostCard>
 

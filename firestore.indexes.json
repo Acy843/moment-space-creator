@@ -1,0 +1,5 @@
+# Phase 0 — Firestore index notes (no composite indexes required).
+# Queries used:
+#   users/{uid}/resets orderBy createdAt desc limit 50  -> single-field, automatic
+#   users/{uid}/checkins (writes only in Phase 0)       -> no query
+# If Phase 1 adds where()+orderBy() combos, add firestore.indexes.json then.

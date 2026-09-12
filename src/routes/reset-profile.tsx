@@ -32,25 +32,39 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 function ResetProfile() {
-  const { state } = useMova();
-  const p = state.profile;
+  const { profile, displayOccupation, onboarded, authReady } = useMova();
+
+  if (!authReady) {
+    return (
+      <MovaScreen withNav={false}>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-[13px] text-soft">Loading your profile…</p>
+        </div>
+      </MovaScreen>
+    );
+  }
+
+  const occupation = profile?.occupation || displayOccupation;
+  const workStyle = profile?.workStyle ?? [];
+  const breakRhythm = profile?.breakRhythm || "Not set yet";
+  const constraints = profile?.constraints ?? [];
 
   return (
     <MovaScreen withNav={false}>
       <ScreenHeader
-        eyebrow="Profile ready"
+        eyebrow={onboarded ? "Profile ready" : "Profile preview"}
         title="Your MOVA Profile"
         subtitle="Built from what you told us — nothing else."
         back="/onboarding"
       />
 
       <FrostCard className="mt-6 px-5 py-2">
-        <Row label="Occupation" value={p.occupation} />
+        <Row label="Occupation" value={occupation || "Not set yet"} />
         <Row
           label="Work style"
-          value={p.workStyle.length ? p.workStyle.join(" + ") : "Standing + walking"}
+          value={workStyle.length ? workStyle.join(" + ") : "Not set yet"}
         />
-        <Row label="Break availability" value={p.breakRhythm} />
+        <Row label="Break availability" value={breakRhythm} />
         <div className="py-3.5">
           <p className="text-[10px] font-semibold tracking-[0.2em] text-soft uppercase">
             Preferred resets
@@ -67,22 +81,22 @@ function ResetProfile() {
         <div className="flex items-center gap-2">
           <Sparkles className="size-4 text-sagedeep" strokeWidth={1.75} />
           <p className="text-[11px] font-semibold tracking-[0.2em] text-sagedeep uppercase">
-            AI recommendation
+            What to expect
           </p>
         </div>
         <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink">
-          Based on your work pattern, we'll focus on short resets that can be completed
-          without disrupting your responsibilities.
+          Based on what you told us, we'll start with short resets that fit around your
+          responsibilities. Suggestions improve as you use MOVA — nothing here is an AI decision yet.
         </p>
       </FrostCard>
 
-      {p.constraints.length > 0 && (
+      {constraints.length > 0 && (
         <div className="mt-5">
           <p className="text-[10px] font-semibold tracking-[0.2em] text-soft uppercase">
             Constraints we'll respect
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {p.constraints.map((c) => (
+            {constraints.map((c) => (
               <Pill key={c}>{c}</Pill>
             ))}
           </div>

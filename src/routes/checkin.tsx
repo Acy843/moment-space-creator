@@ -45,7 +45,6 @@ function CheckIn() {
   const done = () => {
     setCheckIn(feeling ?? "Better", picked);
     addEntry({
-      time: "Just now",
       title: "Shoulder + breathing reset",
       kind: "Breathing",
       status: "completed",

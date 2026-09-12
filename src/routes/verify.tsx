@@ -77,7 +77,13 @@ function VerifyScreen() {
         </p>
       </div>
 
-      <div className="mt-auto pt-8">
+      <div className="mt-auto pt-8 space-y-3">
+        <Link
+          to="/scan"
+          className="frost-2 block w-full rounded-2xl px-5 py-3.5 text-center text-[14px] font-medium text-soft"
+        >
+          Verify with camera (demo)
+        </Link>
         <Link
           to="/checkin"
           className="block w-full rounded-2xl bg-sagedeep/95 px-5 py-4 text-center text-[15px] font-semibold text-white shadow-lg shadow-sagedeep/25"

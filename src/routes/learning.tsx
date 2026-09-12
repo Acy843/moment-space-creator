@@ -35,7 +35,7 @@ const signals = [
 ];
 
 function Learning() {
-  const { state } = useMova();
+  const { state, profile } = useMova();
 
   return (
     <MovaScreen>
@@ -50,7 +50,7 @@ function Learning() {
           ["Work pattern", "High concentration between 9–11 AM"],
           ["Best reset", "Movement"],
           ["Most difficult period", "2–4 PM"],
-          ["Typical break availability", "Short + unpredictable"],
+          ["Typical break availability", profile?.breakRhythm || "Not set yet"],
           [
             "Latest check-in",
             state.lastFeeling ? `You felt "${state.lastFeeling}"` : "Awaiting your next reset",

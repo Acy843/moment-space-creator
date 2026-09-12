@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Brain, ShieldCheck } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { BookOpen, Brain, Footprints, MapPin, ShieldCheck } from "lucide-react";
 import { FrostCard, MovaScreen, Pill } from "@/components/mova/screen";
 import { useMova } from "@/lib/mova-store";
 
@@ -32,11 +33,54 @@ const timeline = [
 ] as const;
 
 function HomeScreen() {
-  const { state } = useMova();
-  const p = state.profile;
+  const { state, profile, onboarded, authReady, backend, syncStatus, syncError, displayName } = useMova();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authReady || syncStatus === "loading") return;
+    if (!onboarded) navigate({ to: "/onboarding" });
+  }, [authReady, syncStatus, onboarded, navigate]);
+
+  if (!authReady || syncStatus === "loading") {
+    return (
+      <MovaScreen>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-[13px] text-soft">Loading your space…</p>
+        </div>
+      </MovaScreen>
+    );
+  }
+
+  if (!onboarded) {
+    return (
+      <MovaScreen>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-[13px] text-soft">Taking you to onboarding…</p>
+        </div>
+      </MovaScreen>
+    );
+  }
+
+  const p = profile;
+  const greeting = displayName && displayName !== "Guest" ? displayName : "there";
 
   return (
     <MovaScreen>
+      {syncStatus === "error" && (
+        <p className="mb-3 text-center text-[11px] font-medium text-soft">
+          Offline mode — changes saved on this device{syncError ? ` (${syncError})` : ""}.
+        </p>
+      )}
+      {backend === "local" && syncStatus === "idle" && (
+        <p className="mb-3 text-center text-[11px] font-medium text-soft">
+          Demo mode — add Firebase env vars to sync across devices.
+        </p>
+      )}
+      {p && (
+        <p className="mb-3 text-center text-[11px] font-medium text-soft">
+          Tuned for {p.occupation || "your work"}{p.breakRhythm ? ` · ${p.breakRhythm}` : ""}.
+        </p>
+      )}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="frost grid size-11 place-items-center rounded-2xl">
@@ -51,7 +95,7 @@ function HomeScreen() {
         </div>
         <Link to="/profile" className="frost-2 grid size-11 place-items-center rounded-2xl">
           <span className="text-sm font-semibold text-sagedeep">
-            {p.name.slice(0, 2).toUpperCase()}
+            {greeting.slice(0, 2).toUpperCase()}
           </span>
         </Link>
       </div>
@@ -61,7 +105,7 @@ function HomeScreen() {
           Good morning
         </p>
         <h1 className="mt-1 font-display text-[30px] leading-[1.05] font-semibold text-ink">
-          {p.name}, let's make space for you.
+          {greeting}, let's make space for you.
         </h1>
         <p className="mt-2 text-[13px] leading-relaxed text-soft">
           Pause before you break. Small pauses, better days.
@@ -167,6 +211,16 @@ function HomeScreen() {
       </FrostCard>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
+        <Link to="/walk" className="frost-2 rounded-2xl p-4">
+          <Footprints className="size-4 text-sagedeep" strokeWidth={1.75} />
+          <p className="mt-2 text-[13px] font-semibold text-ink">Walk demo</p>
+          <p className="text-[11px] text-soft">Miles + place</p>
+        </Link>
+        <Link to="/places" className="frost-2 rounded-2xl p-4">
+          <MapPin className="size-4 text-sagedeep" strokeWidth={1.75} />
+          <p className="mt-2 text-[13px] font-semibold text-ink">My places</p>
+          <p className="text-[11px] text-soft">Home · Work · School</p>
+        </Link>
         <Link to="/library" className="frost-2 rounded-2xl p-4">
           <BookOpen className="size-4 text-sagedeep" strokeWidth={1.75} />
           <p className="mt-2 text-[13px] font-semibold text-ink">Reset Library</p>

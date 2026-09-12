@@ -36,14 +36,15 @@ const groups = [
 ];
 
 function Library() {
-  const { state } = useMova();
+  const { profile, displayOccupation } = useMova();
+  const occupationLabel = (profile?.occupation || displayOccupation || "your").toLowerCase();
 
   return (
     <MovaScreen>
       <ScreenHeader
         eyebrow="Library"
         title="Your Reset Library"
-        subtitle={`Filtered for ${state.profile.occupation.toLowerCase()} work and your environment.`}
+        subtitle={`Filtered for ${occupationLabel} work and your environment.`}
       />
 
       <FrostCard className="mt-6 p-5">

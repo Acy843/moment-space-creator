@@ -18,11 +18,14 @@ import { Route as LearningRouteImport } from './routes/learning'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PauseRouteImport } from './routes/pause'
+import { Route as PlacesRouteImport } from './routes/places'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ResetRouteImport } from './routes/reset'
 import { Route as ResetProfileRouteImport } from './routes/reset-profile'
+import { Route as ScanRouteImport } from './routes/scan'
 import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as WalkRouteImport } from './routes/walk'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -69,6 +72,11 @@ const PauseRoute = PauseRouteImport.update({
   path: '/pause',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlacesRoute = PlacesRouteImport.update({
+  id: '/places',
+  path: '/places',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -89,9 +97,19 @@ const ResetProfileRoute = ResetProfileRouteImport.update({
   path: '/reset-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScanRoute = ScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalkRoute = WalkRouteImport.update({
+  id: '/walk',
+  path: '/walk',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -105,11 +123,14 @@ export interface FileRoutesByFullPath {
   '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
+  '/places': typeof PlacesRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
+  '/scan': typeof ScanRoute
   '/verify': typeof VerifyRoute
+  '/walk': typeof WalkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -121,11 +142,14 @@ export interface FileRoutesByTo {
   '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
+  '/places': typeof PlacesRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
+  '/scan': typeof ScanRoute
   '/verify': typeof VerifyRoute
+  '/walk': typeof WalkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -138,11 +162,14 @@ export interface FileRoutesById {
   '/library': typeof LibraryRoute
   '/onboarding': typeof OnboardingRoute
   '/pause': typeof PauseRoute
+  '/places': typeof PlacesRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/reset': typeof ResetRoute
   '/reset-profile': typeof ResetProfileRoute
+  '/scan': typeof ScanRoute
   '/verify': typeof VerifyRoute
+  '/walk': typeof WalkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -156,11 +183,14 @@ export interface FileRouteTypes {
     | '/library'
     | '/onboarding'
     | '/pause'
+    | '/places'
     | '/privacy'
     | '/profile'
     | '/reset'
     | '/reset-profile'
+    | '/scan'
     | '/verify'
+    | '/walk'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -172,11 +202,14 @@ export interface FileRouteTypes {
     | '/library'
     | '/onboarding'
     | '/pause'
+    | '/places'
     | '/privacy'
     | '/profile'
     | '/reset'
     | '/reset-profile'
+    | '/scan'
     | '/verify'
+    | '/walk'
   id:
     | '__root__'
     | '/'
@@ -188,11 +221,14 @@ export interface FileRouteTypes {
     | '/library'
     | '/onboarding'
     | '/pause'
+    | '/places'
     | '/privacy'
     | '/profile'
     | '/reset'
     | '/reset-profile'
+    | '/scan'
     | '/verify'
+    | '/walk'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -205,11 +241,14 @@ export interface RootRouteChildren {
   LibraryRoute: typeof LibraryRoute
   OnboardingRoute: typeof OnboardingRoute
   PauseRoute: typeof PauseRoute
+  PlacesRoute: typeof PlacesRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   ResetRoute: typeof ResetRoute
   ResetProfileRoute: typeof ResetProfileRoute
+  ScanRoute: typeof ScanRoute
   VerifyRoute: typeof VerifyRoute
+  WalkRoute: typeof WalkRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -277,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PauseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/places': {
+      id: '/places'
+      path: '/places'
+      fullPath: '/places'
+      preLoaderRoute: typeof PlacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -305,11 +351,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scan': {
+      id: '/scan'
+      path: '/scan'
+      fullPath: '/scan'
+      preLoaderRoute: typeof ScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify': {
       id: '/verify'
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/walk': {
+      id: '/walk'
+      path: '/walk'
+      fullPath: '/walk'
+      preLoaderRoute: typeof WalkRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -325,11 +385,14 @@ const rootRouteChildren: RootRouteChildren = {
   LibraryRoute: LibraryRoute,
   OnboardingRoute: OnboardingRoute,
   PauseRoute: PauseRoute,
+  PlacesRoute: PlacesRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   ResetRoute: ResetRoute,
   ResetProfileRoute: ResetProfileRoute,
+  ScanRoute: ScanRoute,
   VerifyRoute: VerifyRoute,
+  WalkRoute: WalkRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

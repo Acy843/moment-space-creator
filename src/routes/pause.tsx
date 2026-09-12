@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { ShieldCheck } from "lucide-react";
 import { MovaScreen, PrimaryButton, ScreenHeader, SelectChip } from "@/components/mova/screen";
 import { useMova } from "@/lib/mova-store";
 
@@ -37,7 +38,6 @@ function PauseScreen() {
 
   const confirm = () => {
     addEntry({
-      time: "Now",
       title: "Shoulder + breathing reset",
       kind: "Movement",
       status: "rescheduled",
@@ -70,7 +70,8 @@ function PauseScreen() {
         <div className="animate-rise mt-6">
           <div className="frost rounded-[26px] p-5">
             <p className="text-[15px] font-semibold text-ink">We'll adjust your next reset.</p>
-            <p className="mt-1.5 text-[12.5px] leading-relaxed text-soft">
+            <p className="mt-1.5 flex items-start gap-2 text-[12.5px] leading-relaxed text-soft">
+              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-sagedeep" strokeWidth={1.75} />
               Your reason is used to learn when resets are realistic for you — not to report
               on you.
             </p>

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MovaCanvas } from "@/components/mova/screen";
+import { useMova } from "@/lib/mova-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +23,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Welcome() {
+  const { onboarded, authReady } = useMova();
+  const target = authReady && onboarded ? "/home" : "/onboarding";
   return (
     <MovaCanvas>
       <div className="relative mx-auto flex min-h-[100dvh] max-w-[420px] flex-col px-6 pt-16 pb-10">
@@ -64,13 +67,13 @@ function Welcome() {
 
         <div className="mt-12 space-y-3">
           <Link
-            to="/onboarding"
+            to={target}
             className="block w-full rounded-2xl bg-sagedeep/95 px-5 py-4 text-center text-[15px] font-semibold text-white shadow-lg shadow-sagedeep/25 transition-all hover:bg-sagedeep active:scale-[0.99]"
           >
             Get Started
           </Link>
           <Link
-            to="/home"
+            to={target}
             className="frost-2 block w-full rounded-2xl px-5 py-3.5 text-center text-[14px] font-medium text-soft transition-colors hover:text-sagedeep"
           >
             I already have an account

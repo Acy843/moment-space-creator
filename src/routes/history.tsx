@@ -20,7 +20,7 @@ export const Route = createFileRoute("/history")({
 });
 
 function History() {
-  const { state } = useMova();
+  const { state, syncStatus } = useMova();
 
   return (
     <MovaScreen>
@@ -29,6 +29,14 @@ function History() {
         title="Your resets"
         subtitle="Enough to notice a pattern — not enough to feel watched."
       />
+      {syncStatus === "loading" && (
+        <p className="mt-3 text-[11px] font-medium text-soft">Loading your resets…</p>
+      )}
+      {state.history.length === 0 && syncStatus !== "loading" && (
+        <p className="mt-6 text-[13px] text-soft">
+          No resets yet. Complete your first reset and it will appear here.
+        </p>
+      )}
 
       <p className="mt-6 text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
         Today
