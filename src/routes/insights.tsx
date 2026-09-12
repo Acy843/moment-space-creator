@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { Gift, Sparkles } from "lucide-react";
 import { FrostCard, MovaScreen, ScreenHeader } from "@/components/mova/screen";
+import { buildAnalyticsSummary } from "@/lib/analytics/analytics-engine";
+import { useMova } from "@/lib/mova-store";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -9,65 +11,141 @@ export const Route = createFileRoute("/insights")({
       {
         name: "description",
         content:
-          "See which resets help you most, when fatigue peaks, and what MOVA suggests for tomorrow.",
+          "See your real reset history, movement minutes, streaks and progress toward milestones.",
       },
       { property: "og:title", content: "Your Reset Insights | MOVA" },
-      { property: "og:description", content: "Small pauses can reveal big patterns." },
+      { property: "og:description", content: "Real movement progress, not demo numbers." },
     ],
   }),
   component: Insights,
 });
 
-const week = [
-  { day: "Mon", work: 76, resets: 4, fatigue: 42 },
-  { day: "Tue", work: 84, resets: 3, fatigue: 58 },
-  { day: "Wed", work: 62, resets: 5, fatigue: 34 },
-  { day: "Thu", work: 90, resets: 2, fatigue: 71 },
-  { day: "Fri", work: 70, resets: 4, fatigue: 40 },
-  { day: "Sat", work: 45, resets: 3, fatigue: 28 },
-  { day: "Sun", work: 30, resets: 2, fatigue: 20 },
-];
-
 function Insights() {
+  const { resets, state } = useMova();
+  const summary = buildAnalyticsSummary(resets, state.checkIns);
+  const distanceKm = summary.totalWalkingDistanceMeters / 1000;
+  const unlockedRewards = summary.rewards.filter((reward) => reward.unlocked);
+
+  const weekData = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - index));
+    const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const count = resets.filter(
+      (reset) =>
+        reset.status === "completed" &&
+        reset.completedAt &&
+        `${new Date(reset.completedAt).getFullYear()}-${String(new Date(reset.completedAt).getMonth() + 1).padStart(2, "0")}-${String(new Date(reset.completedAt).getDate()).padStart(2, "0")}` === dayKey,
+    ).length;
+    return {
+      day: date.toLocaleDateString([], { weekday: "short" }).slice(0, 3),
+      value: count,
+    };
+  });
+
+  const topActivity = summary.activityBreakdown[0];
+
   return (
     <MovaScreen>
       <ScreenHeader
         eyebrow="Insights"
         title="Your Reset Insights"
-        subtitle="Small pauses can reveal big patterns."
+        subtitle="Real movement trends from your actual reset history."
       />
 
-      <FrostCard className="mt-6 p-5">
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <FrostCard soft className="p-3">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-soft uppercase">Today</p>
+          <p className="mt-2 font-display text-[22px] font-bold text-ink">
+            {resets.filter((reset) => reset.status === "completed" && reset.completedAt && new Date(reset.completedAt).toDateString() === new Date().toDateString()).length}
+          </p>
+          <p className="text-[10px] text-soft">completed resets</p>
+        </FrostCard>
+
+        <FrostCard soft className="p-3">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-soft uppercase">This week</p>
+          <p className="mt-2 font-display text-[22px] font-bold text-ink">{Math.round(summary.totalMovementMinutes)}</p>
+          <p className="text-[10px] text-soft">movement minutes</p>
+        </FrostCard>
+
+        <FrostCard soft className="p-3">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-soft uppercase">Streak</p>
+          <p className="mt-2 font-display text-[22px] font-bold text-ink">{summary.currentStreak}</p>
+          <p className="text-[10px] text-soft">consecutive days</p>
+        </FrostCard>
+
+        <FrostCard soft className="p-3">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-soft uppercase">Distance</p>
+          <p className="mt-2 font-display text-[22px] font-bold text-ink">{distanceKm.toFixed(distanceKm >= 10 ? 0 : 1)}km</p>
+          <p className="text-[10px] text-soft">walking total</p>
+        </FrostCard>
+      </div>
+
+      <FrostCard className="mt-4 p-5">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
-          Your best reset
+          Best pattern
         </p>
-        <p className="mt-1.5 font-display text-[24px] font-semibold text-ink">Movement</p>
+        <p className="mt-1.5 font-display text-[24px] font-semibold text-ink">
+          {topActivity ? topActivity.activityName : "No activity yet"}
+        </p>
         <p className="mt-1.5 text-[12.5px] leading-relaxed text-soft">
-          You reported feeling better after 82% of your movement resets.
+          {topActivity
+            ? `${topActivity.completed} completed • ${topActivity.completionRate}% completion rate`
+            : "Your movement story starts here."}
         </p>
         <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-mist">
-          <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-sage to-sky" />
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-sage to-sky"
+            style={{ width: `${summary.completionRate}%` }}
+          />
         </div>
       </FrostCard>
 
       <div className="mt-4 grid gap-4">
         <FrostCard soft className="p-5">
           <p className="text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
-            Your toughest period
+            Activity breakdown
           </p>
-          <p className="mt-1.5 font-display text-[22px] font-semibold text-ink">2:00–4:00 PM</p>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed text-soft">
-            You tend to report higher fatigue during this period.
-          </p>
+          <div className="mt-3 space-y-3">
+            {summary.activityBreakdown.slice(0, 3).map((entry) => (
+              <div key={entry.activityId}>
+                <div className="mb-1 flex items-center justify-between text-[12px] text-ink">
+                  <span>{entry.activityName}</span>
+                  <span>{entry.completionRate}%</span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-mist">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-sage to-sky"
+                    style={{ width: `${entry.completionRate}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+            {summary.activityBreakdown.length === 0 && (
+              <p className="text-[12.5px] text-soft">No completed activity yet.</p>
+            )}
+          </div>
         </FrostCard>
 
         <FrostCard soft className="p-5">
           <p className="text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
-            Your reset pattern
+            Rewards
           </p>
-          <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink">
-            You've been taking fewer breaks on high-workload days.
-          </p>
+          <div className="mt-3 space-y-2">
+            {summary.rewards.slice(0, 3).map((reward) => (
+              <div key={reward.id} className="flex items-center justify-between rounded-2xl bg-white/60 px-2.5 py-2">
+                <div>
+                  <p className="text-[12px] font-semibold text-ink">{reward.name}</p>
+                  <p className="text-[10.5px] text-soft">{reward.progress}/{reward.total}</p>
+                </div>
+                <span className={`grid size-8 place-items-center rounded-xl ${reward.unlocked ? "bg-sage/18 text-sagedeep" : "bg-mist text-soft"}`}>
+                  {reward.icon}
+                </span>
+              </div>
+            ))}
+            {unlockedRewards.length === 0 && (
+              <p className="text-[12.5px] text-soft">No rewards unlocked yet — your first reset is the first milestone.</p>
+            )}
+          </div>
         </FrostCard>
       </div>
 
@@ -76,47 +154,35 @@ function Insights() {
           This week
         </p>
         <div className="mt-5 flex items-end justify-between gap-2">
-          {week.map((d) => (
+          {weekData.map((d) => (
             <div key={d.day} className="flex flex-1 flex-col items-center gap-1.5">
-              <div className="flex h-28 w-full items-end justify-center gap-[3px]">
+              <div className="flex h-24 w-full items-end justify-center">
                 <div
-                  className="w-[7px] rounded-t-full bg-mist"
-                  style={{ height: `${d.work}%` }}
-                />
-                <div
-                  className="w-[7px] rounded-t-full bg-gradient-to-t from-sage to-sky"
-                  style={{ height: `${d.resets * 18}%` }}
-                />
-                <div
-                  className="w-[7px] rounded-t-full bg-sagedeep/35"
-                  style={{ height: `${d.fatigue}%` }}
+                  className="w-[10px] rounded-t-full bg-gradient-to-t from-sage to-sky"
+                  style={{ height: `${Math.max(8, (d.value / Math.max(1, Math.max(...weekData.map((item) => item.value))) * 100))}%` }}
                 />
               </div>
               <span className="text-[10px] font-medium text-soft">{d.day}</span>
             </div>
           ))}
         </div>
-        <div className="mt-4 flex flex-wrap gap-4 text-[10.5px] text-soft">
-          <span className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-mist" /> Work periods
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-sage" /> Reset moments
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-sagedeep/40" /> Reported fatigue
-          </span>
-        </div>
       </FrostCard>
 
       <div className="mt-4 rounded-[26px] bg-sagedeep/92 p-5 text-white shadow-lg shadow-sagedeep/25">
         <div className="flex items-center gap-2">
           <Sparkles className="size-4" strokeWidth={1.75} />
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase">AI suggestion</p>
+          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase">What MOVA knows</p>
         </div>
         <p className="mt-2.5 text-[13.5px] leading-relaxed text-white/90">
-          Tomorrow, I recommend an additional short reset between 2:15 and 2:45 PM.
+          {summary.currentStreak > 0
+            ? `Your strongest habit is ${topActivity ? topActivity.activityName.toLowerCase() : "movement"}, and your current streak is ${summary.currentStreak} day${summary.currentStreak === 1 ? "" : "s"}.`
+            : "Your movement story starts here. Your first completed reset will unlock your first real progress milestone."}
         </p>
+      </div>
+
+      <div className="mt-4 flex items-center gap-3 rounded-2xl bg-sagedeep/8 px-3 py-2 text-[12px] text-soft">
+        <Gift className="size-4 text-sagedeep" strokeWidth={1.75} />
+        <span>{unlockedRewards.length} reward{unlockedRewards.length === 1 ? "" : "s"} unlocked</span>
       </div>
     </MovaScreen>
   );

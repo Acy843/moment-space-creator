@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "MOVA is an AI-powered workplace wellness companion that finds the right moment for short, personalized reset moments.",
+          "MOVA is a pattern-based workplace wellness companion that helps you take timely movement resets without interrupting your workday.",
       },
       { name: "author", content: "MOVA" },
       { property: "og:title", content: "MOVA — Move towards a healthier life" },

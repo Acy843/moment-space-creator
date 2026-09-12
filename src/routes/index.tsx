@@ -9,13 +9,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "MOVA uses AI to help workers take short, personalized reset moments before stress and fatigue build up.",
+          "MOVA helps workers take short, well-timed reset moments before stress and fatigue build up.",
       },
       { property: "og:title", content: "MOVA — Move towards a healthier life" },
       {
         property: "og:description",
         content:
-          "An AI-powered workplace wellness companion that finds the right moment for a short reset.",
+          "A workplace wellness companion that helps you find the right moment for a short reset.",
       },
     ],
   }),
@@ -45,8 +45,7 @@ function Welcome() {
             Moving towards a healthier life.
           </h1>
           <p className="mt-5 max-w-[30ch] text-[15px] leading-relaxed text-soft">
-            MOVA uses AI to help you take meaningful breaks before stress and fatigue build
-            up.
+            MOVA helps you take meaningful breaks before stress and fatigue build up.
           </p>
 
           <div className="relative mt-14 grid place-items-center">

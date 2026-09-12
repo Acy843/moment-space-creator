@@ -1,18 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import { FrostCard, MovaScreen, ScreenHeader } from "@/components/mova/screen";
+import { buildBehaviorSummary, buildBehaviorExplanation } from "@/lib/intelligence/behavior-engine";
 import { useMova } from "@/lib/mova-store";
 
 export const Route = createFileRoute("/learning")({
   head: () => ({
     meta: [
-      { title: "Your AI is learning your rhythm | MOVA" },
+      { title: "Your reset pattern | MOVA" },
       {
         name: "description",
         content:
-          "How MOVA decides when to suggest a reset, which reset to choose, and how lightly to verify it.",
+          "How MOVA uses your reset history and check-ins to suggest the right rhythm for your day.",
       },
-      { property: "og:title", content: "Your AI is learning your rhythm | MOVA" },
+      { property: "og:title", content: "Your reset pattern | MOVA" },
       {
         property: "og:description",
         content: "MOVA is not a timer — it adapts to your shift, your limits and your feedback.",
@@ -22,34 +23,23 @@ export const Route = createFileRoute("/learning")({
   component: Learning,
 });
 
-const signals = [
-  "Occupation",
-  "Work environment",
-  "Work duration",
-  "Your schedule",
-  "Break availability",
-  "Previous reset behaviour",
-  "Self-reported fatigue",
-  "What has helped before",
-  "Safety constraints",
-];
-
 function Learning() {
-  const { state, profile } = useMova();
+  const { state, profile, resets } = useMova();
+  const summary = buildBehaviorSummary(profile, resets, state.checkIns);
 
   return (
     <MovaScreen>
       <ScreenHeader
         eyebrow="Personalization"
-        title="Your AI is learning your rhythm"
-        subtitle="Every check-in makes the next reset fit better."
+        title="Your reset pattern"
+        subtitle="Your schedule is grounded in actual reset history and check-ins."
       />
 
       <FrostCard className="mt-6 px-5 py-2">
         {[
-          ["Work pattern", "High concentration between 9–11 AM"],
-          ["Best reset", "Movement"],
-          ["Most difficult period", "2–4 PM"],
+          ["Work pattern", summary.toughestPeriod],
+          ["Best reset", summary.bestActivityName],
+          ["Most difficult period", summary.toughestPeriod],
           ["Typical break availability", profile?.breakRhythm || "Not set yet"],
           [
             "Latest check-in",
@@ -69,12 +59,11 @@ function Learning() {
         <div className="flex items-center gap-2">
           <Sparkles className="size-4" strokeWidth={1.75} />
           <p className="text-[11px] font-semibold tracking-[0.2em] uppercase">
-            AI recommendation
+            Recommendation
           </p>
         </div>
         <p className="mt-2.5 text-[13.5px] leading-relaxed text-white/90">
-          Your responses suggest that short movement resets are more effective for you than
-          longer breathing exercises. I'll prioritize movement during your afternoon workload.
+          {summary.recommendationText}
         </p>
       </div>
 
@@ -83,7 +72,7 @@ function Learning() {
           What MOVA considers
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {signals.map((s) => (
+          {summary.signals.map((s) => (
             <span
               key={s}
               className="rounded-full bg-white/70 px-2.5 py-1 text-[10.5px] font-medium text-sagedeep"
@@ -110,8 +99,7 @@ function Learning() {
           Later today
         </p>
         <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink">
-          At 3:10 PM I'll suggest a short corridor walk instead of breathing — movement helped
-          you more this week.
+          {buildBehaviorExplanation(summary)}
         </p>
       </FrostCard>
 

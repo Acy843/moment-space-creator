@@ -33,7 +33,7 @@ const promises = [
 const controls = [
   { icon: Database, label: "Personal data", state: "You decide" },
   { icon: Building2, label: "Workplace data", state: "Aggregated only" },
-  { icon: Eye, label: "AI personalization", state: "On" },
+  { icon: Eye, label: "Adaptive personalization", state: "On" },
   { icon: Camera, label: "Verification settings", state: "Motion only" },
 ];
 

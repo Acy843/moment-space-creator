@@ -1,8 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { BookOpen, Brain, Footprints, MapPin, ShieldCheck } from "lucide-react";
-import { FrostCard, MovaScreen, Pill } from "@/components/mova/screen";
+import { useEffect, useMemo, useState } from "react";
+import { BookOpen, Brain, Footprints, MapPin, ShieldCheck, ChevronDown, Clock, Play, Globe } from "lucide-react";
+import { FrostCard, MovaScreen, Pill, PrimaryButton, QuietButton } from "@/components/mova/screen";
+import { buildAnalyticsSummary } from "@/lib/analytics/analytics-engine";
+import { getActivity } from "@/lib/mova-activities";
+import { buildBehaviorSummary } from "@/lib/intelligence/behavior-engine";
 import { useMova } from "@/lib/mova-store";
+import { minutesUntil } from "@/lib/mova-types";
+import type { LocationContext } from "@/lib/location/location-types";
+import { describeLocationContext } from "@/lib/location/location-service";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -32,8 +38,122 @@ const timeline = [
   { time: "4:30", label: "Reflection", tone: "work" },
 ] as const;
 
+const DEMO_CONTEXTS: { value: LocationContext; label: string }[] = [
+  { value: "home", label: "Home" },
+  { value: "work", label: "Work" },
+  { value: "school", label: "School" },
+  { value: "on_the_move", label: "On the move" },
+];
+
+function DemoControls() {
+  const { demo, demoActive, demoReminders, setDemoContext, triggerNextDemoReset, resetDemo, exitDemoMode } = useMova();
+  const [showContextPicker, setShowContextPicker] = useState(false);
+  const [showDemoMenu, setShowDemoMenu] = useState(false);
+
+  return (
+    <div className="mt-5 space-y-3">
+      {demoActive && (
+        <div className="rounded-2xl bg-sagedeep/95 p-4 text-white shadow-lg shadow-sagedeep/25">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Globe className="size-4" />
+              <span className="text-[12px] font-semibold">Demo Mode</span>
+              <span className="text-[10px] text-white/70">· Jordan</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowDemoMenu(!showDemoMenu)}
+              className="rounded-xl bg-white/15 p-1.5 text-white/80 transition-colors hover:bg-white/25"
+            >
+              <ChevronDown className="size-4" />
+            </button>
+          </div>
+          {showDemoMenu && (
+            <div className="mt-3 grid gap-2">
+              <div className="flex items-center justify-between rounded-xl bg-white/10 px-3 py-2">
+                <span className="text-[11px] text-white/80">Context</span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowContextPicker(!showContextPicker)}
+                    className="flex items-center gap-1 rounded-lg bg-white/20 px-2 py-1 text-[10px] text-white transition-colors hover:bg-white/30"
+                  >
+                    {describeLocationContext(demo.readDemoContext().currentContext)}
+                    <ChevronDown className="size-3" />
+                  </button>
+                  {showContextPicker && (
+                    <div className="absolute z-10 mt-1 grid gap-1 rounded-xl bg-ink p-1 shadow-lg">
+                      {DEMO_CONTEXTS.map((ctx) => (
+                        <button
+                          key={ctx.value}
+                          type="button"
+                          onClick={() => {
+                            setDemoContext(ctx.value);
+                            setShowContextPicker(false);
+                          }}
+                          className={`block w-full text-left px-2 py-1 text-[10px] text-white/80 transition-colors hover:bg-white/10 ${
+                            demo.readDemoContext().currentContext === ctx.value ? "text-white font-medium" : ""
+                          }`}
+                        >
+                          {ctx.label}
+                          {demo.readDemoContext().currentContext === ctx.value && " · active"}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={triggerNextDemoReset}
+                className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-left text-[11px] text-white transition-colors hover:bg-white/20"
+              >
+                <Clock className="size-3.5" />
+                Trigger next reset
+              </button>
+              <div className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-[11px] text-white/80">
+                <Play className="size-3.5" />
+                <span>Demo reminders: {demoReminders.length}</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={resetDemo}
+                  className="flex-1 rounded-xl bg-white/10 py-2 text-[10px] font-medium text-white transition-colors hover:bg-white/20"
+                >
+                  Reset demo
+                </button>
+                <button
+                  type="button"
+                  onClick={exitDemoMode}
+                  className="flex-1 rounded-xl bg-white/10 py-2 text-[10px] font-medium text-white transition-colors hover:bg-white/20"
+                >
+                  Exit demo mode
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {!demoActive && (
+        <button
+          type="button"
+          onClick={() => {
+            window.location.search = "?demo=1";
+            window.location.reload();
+          }}
+          className="frost-2 rounded-2xl p-4 text-center text-[12px] font-medium text-sagedeep transition-colors hover:bg-sage/10"
+        >
+          <Play className="mx-auto size-4 mb-1" />
+          Enter Demo Mode
+        </button>
+      )}
+    </div>
+  );
+}
+
 function HomeScreen() {
-  const { state, profile, onboarded, authReady, backend, syncStatus, syncError, displayName } = useMova();
+  const { state, profile, onboarded, authReady, backend, syncStatus, syncError, displayName, resets, nextReset, demo, demoActive } = useMova();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,8 +181,36 @@ function HomeScreen() {
     );
   }
 
-  const p = profile;
+  // Use demo data when in demo mode
+  const effectiveProfile = demoActive ? demo.readDemoContext().profile ?? profile : profile;
+  const effectiveResets = demoActive ? demo.readDemoContext().resets : resets;
+  const effectiveCheckIns = demoActive ? demo.readDemoContext().checkIns : state.checkIns;
+
+  const effectiveNextReset = useMemo(() => {
+    const sorted = [...(demoActive ? demo.readDemoContext().resets : resets)].sort((a, b) => a.scheduledFor.localeCompare(b.scheduledFor));
+    return sorted.find((r) => r.status === "scheduled") ?? null;
+  }, [demoActive, demo.readDemoContext().resets, resets]);
+
+  const p = effectiveProfile;
   const greeting = displayName && displayName !== "Guest" ? displayName : "there";
+  const nextActivity = effectiveNextReset ? getActivity(effectiveNextReset.activityId) : null;
+  const mins = effectiveNextReset ? minutesUntil(effectiveNextReset.scheduledFor) : null;
+  const nextMins = mins !== null && mins >= 0 ? mins : null;
+
+  const behavior = useMemo(() => {
+    if (demoActive) return demo.demoBehavior();
+    return buildBehaviorSummary(effectiveProfile, effectiveResets, effectiveCheckIns);
+  }, [demoActive, demo.demoBehavior, effectiveProfile, effectiveResets, effectiveCheckIns]);
+
+  const analytics = useMemo(() => {
+    if (demoActive) return demo.demoAnalytics();
+    return buildAnalyticsSummary(effectiveResets, effectiveCheckIns);
+  }, [demoActive, demo.demoAnalytics, effectiveResets, effectiveCheckIns]);
+
+  const resetsDone = analytics.completedResets;
+  const totalMovementMinutes = Math.round(analytics.totalMovementMinutes);
+  const rhythmLabel = behavior.bestCategory === "walking" ? "Walk" : behavior.bestCategory === "breathing" ? "Breath" : behavior.bestCategory === "stretch" ? "Stretch" : "Movement";
+  const demoContextLabel = demoActive ? describeLocationContext(demo.readDemoContext().currentContext) : null;
 
   return (
     <MovaScreen>
@@ -102,23 +250,27 @@ function HomeScreen() {
 
       <div className="animate-rise mt-7">
         <p className="text-[11px] font-semibold tracking-[0.24em] text-sagedeep uppercase">
-          Good morning
+          {demoActive ? "Today" : "Good " + (new Date().getHours() < 12 ? "morning" : new Date().getHours() < 17 ? "afternoon" : "evening")}
         </p>
         <h1 className="mt-1 font-display text-[30px] leading-[1.05] font-semibold text-ink">
-          {greeting}, let's make space for you.
+          {greeting}, {demoActive ? "let's see how MOVA responds." : "let's make space for you."}
         </h1>
         <p className="mt-2 text-[13px] leading-relaxed text-soft">
-          Pause before you break. Small pauses, better days.
+          {demoActive
+            ? "Your next reset is ready. MOVA adapts to your context and history."
+            : nextMins !== null && nextMins < 60
+              ? "Your MOVA reset is due soon."
+              : "Pause before you break. Small pauses, better days."}
         </p>
       </div>
 
       <FrostCard className="mt-6 p-5">
         <div className="flex items-center justify-between">
           <p className="text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
-            Today's reset
+            {demoActive ? "Recommended now" : "Today's reset"}
           </p>
           <span className="rounded-full bg-sage/15 px-2.5 py-1 text-[10px] font-semibold text-sagedeep">
-            AI scheduled
+            {demoActive ? "Demo" : "AI scheduled"}
           </span>
         </div>
         <div className="mt-4 flex items-center gap-5">
@@ -126,16 +278,24 @@ function HomeScreen() {
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-sage/25 to-sky/25" />
             <div className="animate-breathe absolute inset-1.5 rounded-full bg-white/50" />
             <div className="relative text-center">
-              <p className="font-display text-[26px] leading-none font-bold text-ink">38</p>
+              <p className="font-display text-[26px] leading-none font-bold text-ink">
+                {nextActivity ? (getActivity(nextActivity.id)?.durationSeconds ?? 2280) / 60 : 38}
+              </p>
               <p className="text-[9px] font-semibold tracking-[0.15em] text-soft uppercase">
                 min
               </p>
             </div>
           </div>
           <div className="min-w-0">
-            <p className="text-[16px] font-semibold text-ink">Shoulder + breathing reset</p>
+            <p className="text-[16px] font-semibold text-ink">
+              {nextActivity?.name ?? "Shoulder + breathing reset"}
+            </p>
             <p className="mt-1.5 text-[12px] leading-relaxed text-soft">
-              Your next reset is based on your work pattern and previous activity.
+              {demoActive
+                ? "This reset adapts to your demo context and history."
+                : nextMins !== null && nextMins < 60
+                  ? "Time to step away for a moment."
+                  : "Your next reset is based on your work pattern and previous activity."}
             </p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               <Pill>Movement</Pill>
@@ -148,24 +308,25 @@ function HomeScreen() {
           to="/reset"
           className="mt-4 block w-full rounded-2xl bg-sagedeep/95 px-5 py-3.5 text-center text-[14px] font-semibold text-white shadow-lg shadow-sagedeep/25 transition-all hover:bg-sagedeep active:scale-[0.99]"
         >
-          Preview my reset moment
+          {demoActive ? "Start reset" : "Preview my reset moment"}
         </Link>
       </FrostCard>
 
+      {/* Demo controls */}
+      <DemoControls />
+
       <div className="mt-5 grid grid-cols-3 gap-3">
         <FrostCard soft className="p-3">
-          <p className="font-display text-[20px] font-bold text-ink">4</p>
+          <p className="font-display text-[20px] font-bold text-ink">{resetsDone}</p>
           <p className="text-[10px] leading-tight font-medium text-soft">resets taken</p>
         </FrostCard>
         <FrostCard soft className="p-3">
-          <p className="font-display text-[20px] font-bold text-ink">2h 14m</p>
-          <p className="text-[10px] leading-tight font-medium text-soft">
-            continuous work avoided
-          </p>
+          <p className="font-display text-[20px] font-bold text-ink">{totalMovementMinutes}m</p>
+          <p className="text-[10px] leading-tight font-medium text-soft">moved</p>
         </FrostCard>
         <FrostCard soft className="p-3">
-          <p className="font-display text-[20px] font-bold text-ink">78%</p>
-          <p className="text-[10px] leading-tight font-medium text-soft">rhythm kept</p>
+          <p className="font-display text-[20px] font-bold text-ink">{rhythmLabel}</p>
+          <p className="text-[10px] leading-tight font-medium text-soft">strongest</p>
         </FrostCard>
       </div>
 

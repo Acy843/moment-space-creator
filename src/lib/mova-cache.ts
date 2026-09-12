@@ -2,12 +2,14 @@
 // Keys are namespaced per-uid so a new anonymous user never sees old profile.
 
 import { defaultSettings, nowIso } from "@/lib/mova-types";
-import type { MovaProfile, MovaSettings, MovaState, ResetEntry, UserDocument } from "@/lib/mova-types";
+import type { CheckIn, MovaProfile, MovaSettings, MovaState, Reset, UserDocument } from "@/lib/mova-types";
 
 export const LEGACY_STATE_KEY = "mova-demo-state-v1";
 export const LEGACY_PROFILE_KEY = "mova-profile-v1";
 export const LEGACY_META_KEY = "mova-meta-v1";
 export const LEGACY_HISTORY_KEY = "mova-history-v1";
+
+const RESETS_CACHE_LIMIT = 200;
 
 const uidScope = (uid: string | null) => (uid ? `:${uid}` : ":local");
 
@@ -15,7 +17,8 @@ export const cacheKeys = (uid: string | null) => ({
   user: `mova-user${uidScope(uid)}`,
   profile: `mova-profile-doc${uidScope(uid)}`,
   settings: `mova-settings${uidScope(uid)}`,
-  history: `mova-history${uidScope(uid)}`,
+  resets: `mova-resets${uidScope(uid)}`,
+  checkIns: `mova-checkins${uidScope(uid)}`,
 });
 
 export const DEMO_FALLBACK_NAME = "Guest";
@@ -44,8 +47,11 @@ export function initialState(): MovaState {
     userDoc: null,
     profile: null,
     settings: null,
-    history: [],
+    resets: [],
+    checkIns: [],
     onboarded: false,
+    currentResetId: null,
+    dailyScheduleDate: null,
     lastFeeling: undefined,
     lastNeeds: [],
   };
@@ -56,17 +62,32 @@ export function loadCachedState(uid: string | null): MovaState {
   const user = readJson(k.user) as UserDocument | null;
   const profile = readJson(k.profile) as MovaProfile | null;
   const settings = readJson(k.settings) as MovaSettings | null;
-  const history = (readJson(k.history) as ResetEntry[] | null) ?? [];
+  const resets = (readJson(k.resets) as Reset[] | null) ?? [];
+  const checkIns = (readJson(k.checkIns) as CheckIn[] | null) ?? [];
   const onboarded = user?.onboardingCompleted === true;
-  return { user: null, userDoc: user, profile, settings, history, onboarded, lastFeeling: undefined, lastNeeds: [] };
+  return {
+    user: null,
+    userDoc: user,
+    profile,
+    settings,
+    resets,
+    checkIns,
+    onboarded,
+    currentResetId: null,
+    dailyScheduleDate: null,
+    lastFeeling: undefined,
+    lastNeeds: [],
+  };
 }
 
+/** Cache is write-through only; a fresh Firestore load always overwrites it. */
 export function persistCachedState(uid: string | null, s: MovaState): void {
   const k = cacheKeys(uid);
   if (s.userDoc) writeJson(k.user, s.userDoc);
   if (s.profile) writeJson(k.profile, s.profile);
   if (s.settings) writeJson(k.settings, s.settings);
-  writeJson(k.history, s.history.slice(0, 100));
+  writeJson(k.resets, s.resets.slice(0, RESETS_CACHE_LIMIT));
+  writeJson(k.checkIns, s.checkIns.slice(0, RESETS_CACHE_LIMIT));
 }
 
 export function clearAllMovaCache(): void {

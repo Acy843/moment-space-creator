@@ -86,7 +86,8 @@ function ResetProfile() {
         </div>
         <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink">
           Based on what you told us, we'll start with short resets that fit around your
-          responsibilities. Suggestions improve as you use MOVA — nothing here is an AI decision yet.
+          responsibilities. As you complete resets and check-ins, the suggestions become more
+          aligned with your actual rhythm and work patterns.
         </p>
       </FrostCard>
 

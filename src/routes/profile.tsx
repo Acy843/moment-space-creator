@@ -9,8 +9,11 @@ import {
   PauseCircle,
   ShieldAlert,
   Sparkles,
+  Play,
+  RotateCcw,
+  X,
 } from "lucide-react";
-import { FrostCard, MovaScreen, ScreenHeader } from "@/components/mova/screen";
+import { FrostCard, MovaScreen, ScreenHeader, PrimaryButton, QuietButton } from "@/components/mova/screen";
 import { useMova } from "@/lib/mova-store";
 
 export const Route = createFileRoute("/profile")({
@@ -30,7 +33,7 @@ export const Route = createFileRoute("/profile")({
 });
 
 function Profile() {
-  const { profile, settings, displayName, displayOccupation, syncStatus, reset } = useMova();
+  const { profile, settings, displayName, displayOccupation, syncStatus, reset, demo, demoActive, enterDemoMode, exitDemoMode, resetDemo } = useMova();
 
   const rows = [
     { icon: Briefcase, label: "Occupation", value: displayOccupation, to: "/onboarding" },
@@ -59,6 +62,35 @@ function Profile() {
         <p className="mt-3 text-[11px] font-medium text-soft">Syncing your profile…</p>
       )}
 
+      {/* Demo mode indicator */}
+      {demoActive && (
+        <div className="mt-3 flex items-center gap-2 rounded-2xl bg-sagedeep/95 p-3 text-white shadow-lg shadow-sagedeep/25">
+          <div className="flex items-center gap-2">
+            <Play className="size-4" />
+            <span className="text-[12px] font-semibold">Demo Mode active</span>
+            <span className="text-[10px] text-white/70">· Jordan</span>
+          </div>
+          <div className="flex gap-2 ml-auto">
+            <button
+              type="button"
+              onClick={resetDemo}
+              className="flex items-center gap-1 rounded-xl bg-white/15 px-2 py-1 text-[10px] text-white transition-colors hover:bg-white/25"
+            >
+              <RotateCcw className="size-3" />
+              Reset
+            </button>
+            <button
+              type="button"
+              onClick={exitDemoMode}
+              className="flex items-center gap-1 rounded-xl bg-white/15 px-2 py-1 text-[10px] text-white transition-colors hover:bg-white/25"
+            >
+              <X className="size-3" />
+              Exit
+            </button>
+          </div>
+        </div>
+      )}
+
       <FrostCard className="mt-6 p-5">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-soft uppercase">
           Work style
@@ -84,6 +116,25 @@ function Profile() {
           </Link>
         ))}
       </div>
+
+      {/* Demo mode controls */}
+      {!demoActive && (
+        <div className="mt-5 space-y-3">
+          <button
+            type="button"
+            onClick={enterDemoMode}
+            className="frost-2 flex w-full items-center gap-3.5 rounded-2xl p-4 text-left transition-colors hover:bg-sage/10"
+          >
+            <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-sage/18 text-sagedeep">
+              <Play className="size-4" strokeWidth={1.75} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13.5px] font-semibold text-ink">Enter Demo Mode</p>
+              <p className="text-[11.5px] text-soft">See MOVA in a controlled competition scenario</p>
+            </div>
+          </button>
+        </div>
+      )}
 
       <button
         type="button"

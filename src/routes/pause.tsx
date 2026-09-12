@@ -32,18 +32,25 @@ const reasons = [
 
 function PauseScreen() {
   const navigate = useNavigate();
-  const { addEntry } = useMova();
+  const { currentReset, nextReset, rescheduleReset } = useMova();
   const [reason, setReason] = useState<string | null>(null);
   const [when, setWhen] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const confirm = () => {
-    addEntry({
-      title: "Shoulder + breathing reset",
-      kind: "Movement",
-      status: "rescheduled",
-      reason: reason ?? "Not possible right now",
-    });
-    navigate({ to: "/home" });
+  const confirm = async () => {
+    const target = currentReset ?? nextReset;
+    if (!target) {
+      navigate({ to: "/home" });
+      return;
+    }
+    const delay = when === "Remind me in 20 min" ? 20 : 10;
+    setBusy(true);
+    try {
+      await rescheduleReset(target.id, delay, reason ?? "Not possible right now");
+      navigate({ to: "/home" });
+    } catch {
+      setBusy(false);
+    }
   };
 
   return (
@@ -81,8 +88,8 @@ function PauseScreen() {
               ))}
             </div>
           </div>
-          <PrimaryButton className="mt-4" onClick={confirm}>
-            Confirm
+          <PrimaryButton className="mt-4" onClick={confirm} disabled={busy}>
+            {busy ? "Moving your reset…" : "Confirm"}
           </PrimaryButton>
         </div>
       )}

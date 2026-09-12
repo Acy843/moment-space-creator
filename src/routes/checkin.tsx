@@ -38,18 +38,14 @@ const needs = [
 
 function CheckIn() {
   const navigate = useNavigate();
-  const { addEntry, setCheckIn } = useMova();
+  const { currentReset, completeReset, saveCheckin } = useMova();
   const [feeling, setFeeling] = useState<string | null>("Better");
   const [picked, setPicked] = useState<string[]>([]);
 
-  const done = () => {
-    setCheckIn(feeling ?? "Better", picked);
-    addEntry({
-      title: "Shoulder + breathing reset",
-      kind: "Breathing",
-      status: "completed",
-      feeling: feeling ?? "Better",
-    });
+  const done = async () => {
+    const resetId = currentReset?.id ?? "none";
+    if (currentReset) await completeReset(currentReset.id);
+    await saveCheckin(resetId, feeling ?? "Better", picked);
     navigate({ to: "/learning" });
   };
 
